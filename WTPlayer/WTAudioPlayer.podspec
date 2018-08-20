@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 
   s.name         = "WTAudioPlayer"
   s.version      = "0.0.1"
-  s.summary      = "iOS环境下边下边播的音乐播放器"
+  s.summary      = "iOS环境边下边播的音乐播放器"
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
-                    iOS环境下边下边播的音乐播放器，谢谢使用
+                    iOS环境边下边播的音乐播放器，谢谢使用
                    DESC
 
   s.homepage     = "https://github.com/ox-man/WTAudioPlayer"
@@ -80,7 +80,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/ox-man/WTAudioPlayer", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/ox-man/WTAudioPlayer.git", :tag => "#{s.version}" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
