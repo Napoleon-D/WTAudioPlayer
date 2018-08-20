@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "997E4B3A30372F9FEA2443163AD3C5EF"
+               BlueprintIdentifier = "99D1B9B17BD00CDDEF4C55C33577BB3F"
                BlueprintName = "KTVHTTPCache"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "libKTVHTTPCache.a">
