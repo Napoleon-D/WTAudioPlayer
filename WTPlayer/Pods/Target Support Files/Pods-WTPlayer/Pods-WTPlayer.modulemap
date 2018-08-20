@@ -1,0 +1,6 @@
+framework module Pods_WTPlayer {
+  umbrella header "Pods-WTPlayer-umbrella.h"
+
+  export *
+  module * { export * }
+}

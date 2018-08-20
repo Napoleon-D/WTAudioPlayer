@@ -1,0 +1,442 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		651274B520C8DC500024A2CA /* NSURL+SafeUrl.m in Sources */ = {isa = PBXBuildFile; fileRef = 651274B420C8DC500024A2CA /* NSURL+SafeUrl.m */; };
+		654A74FD20C9237200C5B90B /* MainTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 654A74FC20C9237200C5B90B /* MainTableViewCell.m */; };
+		655D461520F33FB600251B18 /* WTAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 655D460F20F33FB600251B18 /* WTAudioPlayer.m */; };
+		655D461620F33FB600251B18 /* AudioURLModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 655D461020F33FB600251B18 /* AudioURLModel.m */; };
+		655D461720F33FB600251B18 /* PauseTimeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 655D461120F33FB600251B18 /* PauseTimeModel.m */; };
+		65791CF520BE9F9700515F64 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65791CF420BE9F9700515F64 /* MobileCoreServices.framework */; };
+		65BD04F520BBE7F80012564C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 65BD04F420BBE7F80012564C /* AppDelegate.m */; };
+		65BD04F820BBE7F80012564C /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65BD04F720BBE7F80012564C /* MainViewController.m */; };
+		65BD04FB20BBE7F80012564C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65BD04F920BBE7F80012564C /* Main.storyboard */; };
+		65BD04FD20BBE7F80012564C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65BD04FC20BBE7F80012564C /* Assets.xcassets */; };
+		65BD050020BBE7F80012564C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65BD04FE20BBE7F80012564C /* LaunchScreen.storyboard */; };
+		65BD050320BBE7F80012564C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 65BD050220BBE7F80012564C /* main.m */; };
+		65BD051820BC330D0012564C /* test.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 65BD051720BC330D0012564C /* test.mp3 */; };
+		65BD051B20BC367C0012564C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65BD051A20BC367C0012564C /* AVFoundation.framework */; };
+		795121EE2EFC92A5BE670CAB /* libPods-WTPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B7506631E3408DFBDBBA1E4 /* libPods-WTPlayer.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		651274B320C8DC500024A2CA /* NSURL+SafeUrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+SafeUrl.h"; sourceTree = "<group>"; };
+		651274B420C8DC500024A2CA /* NSURL+SafeUrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+SafeUrl.m"; sourceTree = "<group>"; };
+		654A74FB20C9237200C5B90B /* MainTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainTableViewCell.h; sourceTree = "<group>"; };
+		654A74FC20C9237200C5B90B /* MainTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainTableViewCell.m; sourceTree = "<group>"; };
+		655D460E20F33FB600251B18 /* Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Header.h; sourceTree = "<group>"; };
+		655D460F20F33FB600251B18 /* WTAudioPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WTAudioPlayer.m; sourceTree = "<group>"; };
+		655D461020F33FB600251B18 /* AudioURLModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioURLModel.m; sourceTree = "<group>"; };
+		655D461120F33FB600251B18 /* PauseTimeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PauseTimeModel.m; sourceTree = "<group>"; };
+		655D461220F33FB600251B18 /* WTAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTAudioPlayer.h; sourceTree = "<group>"; };
+		655D461320F33FB600251B18 /* PauseTimeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PauseTimeModel.h; sourceTree = "<group>"; };
+		655D461420F33FB600251B18 /* AudioURLModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioURLModel.h; sourceTree = "<group>"; };
+		65791CF420BE9F9700515F64 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		65BD04F020BBE7F80012564C /* WTPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WTPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		65BD04F320BBE7F80012564C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		65BD04F420BBE7F80012564C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		65BD04F620BBE7F80012564C /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		65BD04F720BBE7F80012564C /* MainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		65BD04FA20BBE7F80012564C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		65BD04FC20BBE7F80012564C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		65BD04FF20BBE7F80012564C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		65BD050120BBE7F80012564C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		65BD050220BBE7F80012564C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		65BD051720BC330D0012564C /* test.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = test.mp3; sourceTree = "<group>"; };
+		65BD051A20BC367C0012564C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		7B7506631E3408DFBDBBA1E4 /* libPods-WTPlayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WTPlayer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E17BBB78FA6873D53CFBB4F7 /* Pods-WTPlayer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WTPlayer.release.xcconfig"; path = "Pods/Target Support Files/Pods-WTPlayer/Pods-WTPlayer.release.xcconfig"; sourceTree = "<group>"; };
+		E96A7ADE3431C04520F32EC7 /* Pods-WTPlayer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WTPlayer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WTPlayer/Pods-WTPlayer.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		65BD04ED20BBE7F80012564C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65791CF520BE9F9700515F64 /* MobileCoreServices.framework in Frameworks */,
+				65BD051B20BC367C0012564C /* AVFoundation.framework in Frameworks */,
+				795121EE2EFC92A5BE670CAB /* libPods-WTPlayer.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		655D460D20F33FB600251B18 /* MusicPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				655D460E20F33FB600251B18 /* Header.h */,
+				651274B320C8DC500024A2CA /* NSURL+SafeUrl.h */,
+				651274B420C8DC500024A2CA /* NSURL+SafeUrl.m */,
+				655D461220F33FB600251B18 /* WTAudioPlayer.h */,
+				655D460F20F33FB600251B18 /* WTAudioPlayer.m */,
+				655D461420F33FB600251B18 /* AudioURLModel.h */,
+				655D461020F33FB600251B18 /* AudioURLModel.m */,
+				655D461320F33FB600251B18 /* PauseTimeModel.h */,
+				655D461120F33FB600251B18 /* PauseTimeModel.m */,
+			);
+			path = MusicPlayer;
+			sourceTree = "<group>";
+		};
+		65BD04E720BBE7F80012564C = {
+			isa = PBXGroup;
+			children = (
+				65BD04F220BBE7F80012564C /* WTPlayer */,
+				65BD04F120BBE7F80012564C /* Products */,
+				65BD051920BC367B0012564C /* Frameworks */,
+				9FB77A1EA6DE1D5CD579F03F /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		65BD04F120BBE7F80012564C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				65BD04F020BBE7F80012564C /* WTPlayer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		65BD04F220BBE7F80012564C /* WTPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				655D460D20F33FB600251B18 /* MusicPlayer */,
+				65BD04F320BBE7F80012564C /* AppDelegate.h */,
+				65BD04F420BBE7F80012564C /* AppDelegate.m */,
+				65BD04F620BBE7F80012564C /* MainViewController.h */,
+				65BD04F720BBE7F80012564C /* MainViewController.m */,
+				654A74FB20C9237200C5B90B /* MainTableViewCell.h */,
+				654A74FC20C9237200C5B90B /* MainTableViewCell.m */,
+				65BD04F920BBE7F80012564C /* Main.storyboard */,
+				65BD04FC20BBE7F80012564C /* Assets.xcassets */,
+				65BD051720BC330D0012564C /* test.mp3 */,
+				65BD04FE20BBE7F80012564C /* LaunchScreen.storyboard */,
+				65BD050120BBE7F80012564C /* Info.plist */,
+				65BD050220BBE7F80012564C /* main.m */,
+			);
+			path = WTPlayer;
+			sourceTree = "<group>";
+		};
+		65BD051920BC367B0012564C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				65791CF420BE9F9700515F64 /* MobileCoreServices.framework */,
+				65BD051A20BC367C0012564C /* AVFoundation.framework */,
+				7B7506631E3408DFBDBBA1E4 /* libPods-WTPlayer.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9FB77A1EA6DE1D5CD579F03F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E96A7ADE3431C04520F32EC7 /* Pods-WTPlayer.debug.xcconfig */,
+				E17BBB78FA6873D53CFBB4F7 /* Pods-WTPlayer.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		65BD04EF20BBE7F80012564C /* WTPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65BD050620BBE7F80012564C /* Build configuration list for PBXNativeTarget "WTPlayer" */;
+			buildPhases = (
+				0E6F58B33C01FB96D6AB7C01 /* [CP] Check Pods Manifest.lock */,
+				65BD04EC20BBE7F80012564C /* Sources */,
+				65BD04ED20BBE7F80012564C /* Frameworks */,
+				65BD04EE20BBE7F80012564C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WTPlayer;
+			productName = WTPlayer;
+			productReference = 65BD04F020BBE7F80012564C /* WTPlayer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		65BD04E820BBE7F80012564C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0930;
+				ORGANIZATIONNAME = Tommy;
+				TargetAttributes = {
+					65BD04EF20BBE7F80012564C = {
+						CreatedOnToolsVersion = 9.3;
+					};
+				};
+			};
+			buildConfigurationList = 65BD04EB20BBE7F80012564C /* Build configuration list for PBXProject "WTPlayer" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 65BD04E720BBE7F80012564C;
+			productRefGroup = 65BD04F120BBE7F80012564C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				65BD04EF20BBE7F80012564C /* WTPlayer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		65BD04EE20BBE7F80012564C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65BD050020BBE7F80012564C /* LaunchScreen.storyboard in Resources */,
+				65BD04FD20BBE7F80012564C /* Assets.xcassets in Resources */,
+				65BD051820BC330D0012564C /* test.mp3 in Resources */,
+				65BD04FB20BBE7F80012564C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0E6F58B33C01FB96D6AB7C01 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WTPlayer-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		65BD04EC20BBE7F80012564C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65BD04F820BBE7F80012564C /* MainViewController.m in Sources */,
+				651274B520C8DC500024A2CA /* NSURL+SafeUrl.m in Sources */,
+				65BD050320BBE7F80012564C /* main.m in Sources */,
+				65BD04F520BBE7F80012564C /* AppDelegate.m in Sources */,
+				654A74FD20C9237200C5B90B /* MainTableViewCell.m in Sources */,
+				655D461720F33FB600251B18 /* PauseTimeModel.m in Sources */,
+				655D461620F33FB600251B18 /* AudioURLModel.m in Sources */,
+				655D461520F33FB600251B18 /* WTAudioPlayer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		65BD04F920BBE7F80012564C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				65BD04FA20BBE7F80012564C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		65BD04FE20BBE7F80012564C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				65BD04FF20BBE7F80012564C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		65BD050420BBE7F80012564C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		65BD050520BBE7F80012564C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		65BD050720BBE7F80012564C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E96A7ADE3431C04520F32EC7 /* Pods-WTPlayer.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = V8WUYJB2PT;
+				INFOPLIST_FILE = WTPlayer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommy.WTPlayer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		65BD050820BBE7F80012564C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E17BBB78FA6873D53CFBB4F7 /* Pods-WTPlayer.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = V8WUYJB2PT;
+				INFOPLIST_FILE = WTPlayer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommy.WTPlayer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		65BD04EB20BBE7F80012564C /* Build configuration list for PBXProject "WTPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65BD050420BBE7F80012564C /* Debug */,
+				65BD050520BBE7F80012564C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		65BD050620BBE7F80012564C /* Build configuration list for PBXNativeTarget "WTPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65BD050720BBE7F80012564C /* Debug */,
+				65BD050820BBE7F80012564C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 65BD04E820BBE7F80012564C /* Project object */;
+}

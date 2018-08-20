@@ -1,0 +1,11 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '8.0'
+
+target 'WTPlayer' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # 指定版本的为修改过源码或者不能更新最新版本的库
+  # Pods for WTPlayer
+  pod 'KTVHTTPCache'
+  pod 'YYCategories'
+  
+end
