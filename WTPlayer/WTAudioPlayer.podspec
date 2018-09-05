@@ -22,6 +22,6 @@ s.license     = { :type => "MIT", :file => "FILE_LICENSE" }
 
 s.requires_arc = true
 
-s.dependency "KTVHTTPCache" , "YYCategories"
+s.dependency = "KTVHTTPCache" , "YYCategories"
 
 end
