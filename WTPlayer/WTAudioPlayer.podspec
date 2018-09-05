@@ -14,7 +14,7 @@ s.homepage    = "https://github.com/ox-man"
 
 s.author     = { "ox-man" => "wangtao199205@qq.com" }
 
-s.source      = { :git => "https://github.com/ox-man/WTAudioPlayer.git",:tag => s.version}
+s.source      = { :git => "https://github.com/ox-man/WTAudioPlayer.git",:tag => s.version.to_s}
 
 s.source_files = 'MusicPlayer/*'
 
