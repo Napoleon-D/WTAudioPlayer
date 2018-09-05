@@ -18,10 +18,11 @@ s.source      = { :git => "https://github.com/ox-man/WTAudioPlayer.git",:tag => 
 
 s.source_files = 'MusicPlayer/*'
 
-s.license     = { :type => "MIT", :file => "FILE_LICENSE" }
+s.license     = { :type => "MIT", :file => "LICENSE" }
 
 s.requires_arc = true
 
-s.dependency = "KTVHTTPCache" , "YYCategories"
+s.dependency "KTVHTTPCache"
+s.dependency "YYCategories"
 
 end
