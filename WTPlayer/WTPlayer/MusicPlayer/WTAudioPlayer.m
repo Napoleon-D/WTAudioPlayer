@@ -104,6 +104,7 @@
     [KTVHTTPCache logSetConsoleLogEnable:NO];
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
         /// 本地服务只开启一次
         NSError * error;
         [KTVHTTPCache proxyStart:&error];
