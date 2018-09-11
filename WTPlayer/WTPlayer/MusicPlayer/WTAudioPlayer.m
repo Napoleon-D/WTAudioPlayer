@@ -102,11 +102,15 @@
 {
     ///  是否打印日志
     [KTVHTTPCache logSetConsoleLogEnable:NO];
-    NSError * error;
-    [KTVHTTPCache proxyStart:&error];
-    if (error) {
-        NSLog(@"Proxy Start Failure, %@", error);
-    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        /// 本地服务只开启一次
+        NSError * error;
+        [KTVHTTPCache proxyStart:&error];
+        if (error) {
+            NSLog(@"Proxy Start Failure, %@", error);
+        }
+    });
     [KTVHTTPCache tokenSetURLFilter:^NSURL * (NSURL * URL) {
         return URL;
     }];

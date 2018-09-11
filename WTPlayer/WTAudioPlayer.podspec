@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
 
 s.name        = "WTAudioPlayer"
 
-s.version     = "0.0.2"
+s.version     = "0.0.3"
 
 s.platform = :ios, "8.0"
 
@@ -16,7 +16,7 @@ s.author     = { "ox-man" => "wangtao199205@qq.com" }
 
 s.source      = { :git => "https://github.com/ox-man/WTAudioPlayer.git",:tag => s.version.to_s}
 
-s.source_files = 'MusicPlayer/*'
+s.source_files = "WTPlayer/MusicPlayer/*.{h,m}"
 
 s.license     = { :type => "MIT", :file => "LICENSE" }
 
