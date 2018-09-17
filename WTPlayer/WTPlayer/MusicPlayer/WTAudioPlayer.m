@@ -263,8 +263,13 @@
     }
     [self audioSessionSetActive:YES setCategory:sessionCategory];
     
-    ///  改变播放器状态,不用回调
+    ///  改变播放器状态
     self.playerStatus = WTAudioPlayerStatusResume;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
+        }
+    });
     
     ///  跳转到指定时间
     CMTime pauseTime = CMTimeMake(mode.value, mode.timescale);

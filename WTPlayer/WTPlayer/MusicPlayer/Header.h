@@ -20,7 +20,6 @@ typedef NS_ENUM(NSInteger,WTAudioPlayerStatus) {
     WTAudioPlayerStatusStop,
     WTAudioPlayerStatusPlayToEnd,
     WTAudioPlayerStatusPlayFailed,
-    ///  用来内部判断，状态回调的方法里不会传入此状态
     WTAudioPlayerStatusResume
 };
 
