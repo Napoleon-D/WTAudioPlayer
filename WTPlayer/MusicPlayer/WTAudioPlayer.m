@@ -579,7 +579,7 @@
     if ([self.delegate respondsToSelector:@selector(shouldPauseWhenApplicationWillResignActive:)] && self.delegate) {
         shouldPause = [self.delegate shouldPauseWhenApplicationWillResignActive:self.audioPlayer];
     }
-    if (shouldPause && ((self.playerStatus == WTAudioPlayerStatusPlaying) || (self.playerStatus == WTAudioPlayerStatusResume)) && self.currentAudioPlayingURLString) {
+    if (shouldPause && ((self.playerStatus == WTAudioPlayerStatusPlaying) || (self.playerStatus == WTAudioPlayerStatusResume) || (self.playerStatus == WTAudioPlayerStatusCaching)) && self.currentAudioPlayingURLString) {
         [self pauseWithUrlString:self.currentAudioPlayingURLString];
         self.needResumePlay = YES;
     }
@@ -600,7 +600,7 @@
     if ([self.delegate respondsToSelector:@selector(shouldPauseWhenApplicationDidEnterBackground:)] && self.delegate) {
         shouldPause = [self.delegate shouldPauseWhenApplicationDidEnterBackground:self.audioPlayer];
     }
-    if (shouldPause && ((self.playerStatus == WTAudioPlayerStatusPlaying) || (self.playerStatus == WTAudioPlayerStatusResume)) && self.currentAudioPlayingURLString) {
+    if (shouldPause && ((self.playerStatus == WTAudioPlayerStatusPlaying) || (self.playerStatus == WTAudioPlayerStatusResume) || (self.playerStatus == WTAudioPlayerStatusCaching)) && self.currentAudioPlayingURLString) {
         [self pauseWithUrlString:self.currentAudioPlayingURLString];
         self.needResumePlay = YES;
     }
