@@ -14,13 +14,13 @@
 
 typedef NS_ENUM(NSInteger,WTAudioPlayerStatus) {
     WTAudioPlayerStatusUnknow = -1,
-    WTAudioPlayerStatusCaching,
-    WTAudioPlayerStatusPlaying,
-    WTAudioPlayerStatusPause,
-    WTAudioPlayerStatusStop,
-    WTAudioPlayerStatusPlayToEnd,
-    WTAudioPlayerStatusPlayFailed,
-    WTAudioPlayerStatusResume
+    WTAudioPlayerStatusCaching = 0,
+    WTAudioPlayerStatusPlaying = 1,
+    WTAudioPlayerStatusPause = 2,
+    WTAudioPlayerStatusStop = 3,
+    WTAudioPlayerStatusPlayToEnd = 4,
+    WTAudioPlayerStatusPlayFailed = 5,
+    WTAudioPlayerStatusResume = 6
 };
 
 

@@ -130,28 +130,27 @@
         NSLog(@"音频链接不能为空！");
         return;
     }
-    
+    self.needResumePlay = YES;
+    self.currentAudioPlayingURLString = urlString;
     AVPlayerItem *item;
     if ([_urlArray containsObject:urlString]) {
         
         ///  播放过的音频，直接获取item
         item = (AVPlayerItem *)[_itemDict objectForKey:urlString];
         [_audioPlayer replaceCurrentItemWithPlayerItem:item];
+        [self addTimeObsrveToAudioPlayerWithItem:item];
+        self.playerStatus = WTAudioPlayerStatusUnknow;
+        [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusUnknow];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+                [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
+            }
+        });
         __weak WTAudioPlayer *weakSelf = self;
         [_audioPlayer seekToTime:CMTimeMake(0, 1) completionHandler:^(BOOL finished) {
             [weakSelf.audioPlayer play];
-            weakSelf.playerStatus = WTAudioPlayerStatusPlaying;
-            
-            ///  改变状态并回调
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([weakSelf.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && weakSelf.delegate) {
-                    [weakSelf.delegate audioPlayer:weakSelf.audioPlayer didChangedStatus:weakSelf.playerStatus audioURLString:self.currentAudioPlayingURLString];
-                }
-            });
-            
-            [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusPlaying];
-            
         }];
+        
     }else{
         ///  未播放过得音频，添加到记录中去
         [_urlArray addObject:urlString];
@@ -163,20 +162,18 @@
         item = [self playerItemWithUrlString:urlString isLocalFileURL:isLocalFile];
         [_itemDict setObject:item forKey:urlString];
         [_audioPlayer replaceCurrentItemWithPlayerItem:item];
-        self.playerStatus = WTAudioPlayerStatusCaching;
-        ///  改变状态并回调
+        [self addTimeObsrveToAudioPlayerWithItem:item];
+        self.playerStatus = WTAudioPlayerStatusUnknow;
+        [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusUnknow];
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
                 [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
             }
         });
-        [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusCaching];
+        
         
     }
-    self.needResumePlay = YES;
-    self.currentAudioPlayingURLString = urlString;
-    [self addTimeObsrveToAudioPlayerWithItem:item];
-    self.currentAudioPlayingURLString = urlString;
+    
 }
 
 -(void)addTimeObsrveToAudioPlayerWithItem:(AVPlayerItem *)item{
@@ -208,6 +205,15 @@
         return;
     }
     
+    self.needResumePlay = NO;
+    self.playerStatus = WTAudioPlayerStatusPause;
+    [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusPause];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:urlString];
+        }
+    });
+    
     ///  记录暂停的时间
     PauseTimeModel *model = [[PauseTimeModel alloc] init];
     model.value = _audioPlayer.currentTime.value;
@@ -215,21 +221,9 @@
     model.flags = _audioPlayer.currentTime.flags;
     model.epoch = _audioPlayer.currentTime.epoch;
     [_pauseTimeDict setObject:model forKey:urlString];
-    
     ///  暂停
     [_audioPlayer pause];
     
-    ///  改变状态并回调
-    self.playerStatus = WTAudioPlayerStatusPause;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-        }
-    });
-    
-    [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusPause];
-    
-    self.needResumePlay = NO;
 }
 
 -(void)resumeWithUrlString:(NSString *)urlString{
@@ -256,6 +250,9 @@
         return;
     }
     
+    self.needResumePlay = YES;
+    self.currentAudioPlayingURLString = urlString;
+    
     ///  设置音频会话分类
     NSString *sessionCategory = AVAudioSessionCategoryPlayback;
     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenPlaying)] && self.delegate) {
@@ -265,6 +262,8 @@
     
     ///  改变播放器状态
     self.playerStatus = WTAudioPlayerStatusResume;
+    [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusResume];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
             [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
@@ -278,8 +277,7 @@
         [self.audioPlayer play];
     }];
     
-    self.needResumePlay = YES;
-    self.currentAudioPlayingURLString = urlString;
+    
 }
 
 -(void)stopWithUrlString:(NSString *)urlString{
@@ -294,6 +292,15 @@
         return;
     }
     
+    ///  改变状态并回调
+    self.playerStatus = WTAudioPlayerStatusStop;
+    [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusStop];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:urlString];
+        }
+    });
+    
     ///  停止播放
     [_audioPlayer pause];
     
@@ -305,16 +312,6 @@
     
     ///  操作此功能，应用再次被响应的时候，不会继续播放
     self.needResumePlay = NO;
-    
-    ///  改变状态并回调
-    self.playerStatus = WTAudioPlayerStatusStop;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-        }
-    });
-    
-    [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusStop];
     
     ///  停止检测
     if (self.timeObserve) {
@@ -429,7 +426,7 @@
             [_itemDict removeObjectForKey:key];
         }
     }
-
+    
 }
 
 ///  获取播放资源的状态
@@ -498,9 +495,24 @@
     if(totalSeconds == 0 || isnan(totalSeconds) || elapsedSeconds > totalSeconds){
         return;
     }
+    
+    if (elapsedSeconds == 0) {
+        /// 开始播放
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.playerStatus = WTAudioPlayerStatusPlaying;
+            [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+                    [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
+                }
+            });
+        });
+    }
+    
     dispatch_async(dispatch_get_main_queue(), ^{
+        /// 播放时间回调
         if ([self.delegate respondsToSelector:@selector(audioPlayerURL:currentTime:forTotalSeconds:status:)] && self.delegate) {
-            [self.delegate audioPlayerURL:_currentAudioPlayingURLString currentTime:elapsedSeconds forTotalSeconds:totalSeconds status:self.playerStatus];
+            [self.delegate audioPlayerURL:self->_currentAudioPlayingURLString currentTime:elapsedSeconds forTotalSeconds:totalSeconds status:self.playerStatus];
         }
     });
     
@@ -508,26 +520,16 @@
 
 ///  重新播放
 -(void)replayWithUrlString:(NSString *)urlString{
-    
+    self.needResumePlay = YES;
+    self.currentAudioPlayingURLString = urlString;
     AVPlayerItem *item = (AVPlayerItem *)[_itemDict objectForKey:urlString];
     [_audioPlayer replaceCurrentItemWithPlayerItem:item];
+    [self addTimeObsrveToAudioPlayerWithItem:item];
     __weak WTAudioPlayer *weakSelf = self;
     [_audioPlayer seekToTime:CMTimeMake(0, 1) completionHandler:^(BOOL finished) {
         [weakSelf.audioPlayer play];
-        ///  改变状态并回调
-        weakSelf.playerStatus = WTAudioPlayerStatusPlaying;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([weakSelf.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && weakSelf.delegate) {
-                [weakSelf.delegate audioPlayer:weakSelf.audioPlayer didChangedStatus:weakSelf.playerStatus audioURLString:self.currentAudioPlayingURLString];
-            }
-        });
-        [weakSelf setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusPlaying];
     }];
     
-    [self addTimeObsrveToAudioPlayerWithItem:item];
-    
-    self.needResumePlay = YES;
-    self.currentAudioPlayingURLString = urlString;
 }
 
 ///  获取AVPlayerItem
@@ -670,13 +672,13 @@
         [self removeAudioRecorde:self.currentAudioPlayingURLString];
         ///  状态改变 && 回调
         self.playerStatus = WTAudioPlayerStatusPlayToEnd;
+        [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayToEnd];
         dispatch_async(dispatch_get_main_queue(), ^{
             
             if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
                 [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
             }
         });
-        [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayToEnd];
         
         ///  播放完成回调
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -709,12 +711,12 @@
     
     ///  改变状态 && 回调
     self.playerStatus = WTAudioPlayerStatusCaching;
+    [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusCaching];
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
             [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
         }
     });
-    [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusCaching];
 }
 
 ///  缓存失败，未能成功恢复播放
@@ -733,27 +735,6 @@
 ///  (AVPlayer有新的日志记录，会调用该方法，比如新的播放，暂停)缓存成功，恢复播放
 -(void)recoveryPlaySuccess:(NSNotification *)notification{
     
-    
-    ///  记录系统缓存后重新恢复播放的日志
-//    if ((self.playerStatus == WTAudioPlayerStatusCaching) && (self.didPlayAudio == YES)) {
-    if (self.playerStatus == WTAudioPlayerStatusCaching) {
-        
-        [_audioPlayer play];
-        self.playerStatus = WTAudioPlayerStatusPlaying;
-        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-        }
-        [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
-    }
-    
-    ///  记录暂停之后再次续播后的日志
-    if (self.playerStatus == WTAudioPlayerStatusResume) {
-        self.playerStatus = WTAudioPlayerStatusPlaying;
-        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-        }
-        [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
-    }
 }
 
 ///  KVO
@@ -767,48 +748,37 @@
         switch (status) {
             case AVPlayerItemStatusUnknown:{
                 self.playerStatus = WTAudioPlayerStatusUnknow;
+                [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusUnknow];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
                         [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
                     }
                 });
-                [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusUnknow];
                 
                 break;
             }
                 
             case AVPlayerItemStatusReadyToPlay:{
-                if (self.playerStatus == WTAudioPlayerStatusCaching) {
+                if (self.playerStatus == WTAudioPlayerStatusUnknow) {
                     
                     NSString *sessionCategory = AVAudioSessionCategoryPlayback;
                     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenPlaying)] && self.delegate) {
                         sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
                     }
                     [self audioSessionSetActive:YES setCategory:sessionCategory];
-                    
                     [_audioPlayer play];
-//                    self.didPlayAudio = YES;
-                    
-//                    self.playerStatus = WTAudioPlayerStatusPlaying;
-//                    dispatch_async(dispatch_get_main_queue(), ^{
-//                        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:)] && self.delegate) {
-//                            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus];
-//                        }
-//                    });
-                    
-                    [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
                 }
                 break;
             }
                 
             case AVPlayerItemStatusFailed:{
                 self.playerStatus = WTAudioPlayerStatusPlayFailed;
+                [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayFailed];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
                         [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
                     }
                 });
-                [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayFailed];
                 break;
             }
                 
