@@ -36,8 +36,7 @@
 @property(nonatomic,copy)NSString *currentAudioPlayingURLString;
 ///  当前视频播放器长度的观察者
 @property(nonatomic,assign)id timeObserve;
-///  是否已经播放
-//@property(nonatomic,assign)BOOL didPlayAudio;
+
 @end
 
 @implementation WTAudioPlayer
@@ -772,6 +771,11 @@
                         sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
                     }
                     [self audioSessionSetActive:YES setCategory:sessionCategory];
+                    
+                    /// 本地文件开始播放不会触发AVPlayer的通知
+                    AudioURLModel *currentModel = [self getAudioURLModelForAudioURLString:self.currentAudioPlayingURLString];
+                    if (currentModel.isLocalFile) [self recoveryPlaySuccess:nil];
+                    
                     [_audioPlayer play];
                 }
                 break;
