@@ -496,19 +496,6 @@
         return;
     }
     
-    if (elapsedSeconds == 0) {
-        /// 开始播放
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.playerStatus = WTAudioPlayerStatusPlaying;
-            [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-                    [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-                }
-            });
-        });
-    }
-    
     dispatch_async(dispatch_get_main_queue(), ^{
         /// 播放时间回调
         if ([self.delegate respondsToSelector:@selector(audioPlayerURL:currentTime:forTotalSeconds:status:)] && self.delegate) {
@@ -527,6 +514,13 @@
     [self addTimeObsrveToAudioPlayerWithItem:item];
     __weak WTAudioPlayer *weakSelf = self;
     [_audioPlayer seekToTime:CMTimeMake(0, 1) completionHandler:^(BOOL finished) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.playerStatus = WTAudioPlayerStatusPlaying;
+            [weakSelf setAudioURLModelStatusWithString:weakSelf.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
+            if ([weakSelf.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && weakSelf.delegate) {
+                [weakSelf.delegate audioPlayer:weakSelf.audioPlayer didChangedStatus:weakSelf.playerStatus audioURLString:weakSelf.currentAudioPlayingURLString];
+            }
+        });
         [weakSelf.audioPlayer play];
     }];
     
@@ -649,7 +643,7 @@
     if((totalSeconds != 0) && !isnan(totalSeconds)){
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([self.delegate respondsToSelector:@selector(audioPlayerURL:currentTime:forTotalSeconds:status:)] && self.delegate) {
-                [self.delegate audioPlayerURL:_currentAudioPlayingURLString currentTime:totalSeconds forTotalSeconds:totalSeconds status:self.playerStatus];
+                [self.delegate audioPlayerURL:self->_currentAudioPlayingURLString currentTime:totalSeconds forTotalSeconds:totalSeconds status:self.playerStatus];
             }
         });
     }
@@ -710,13 +704,13 @@
 -(void)interruptPlayToCache:(NSNotification *)notification{
     
     ///  改变状态 && 回调
-    self.playerStatus = WTAudioPlayerStatusCaching;
-    [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusCaching];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-        }
-    });
+    //    self.playerStatus = WTAudioPlayerStatusCaching;
+    //    [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusCaching];
+    //    dispatch_async(dispatch_get_main_queue(), ^{
+    //        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+    //            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
+    //        }
+    //    });
 }
 
 ///  缓存失败，未能成功恢复播放
@@ -734,6 +728,18 @@
 
 ///  (AVPlayer有新的日志记录，会调用该方法，比如新的播放，暂停)缓存成功，恢复播放
 -(void)recoveryPlaySuccess:(NSNotification *)notification{
+    
+    if (self.playerStatus == WTAudioPlayerStatusUnknow) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.playerStatus = WTAudioPlayerStatusPlaying;
+            [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+                    [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
+                }
+            });
+        });
+    }
     
 }
 
