@@ -61,7 +61,7 @@
 
 @interface WTAudioPlayer : NSObject
 
-@property(nonatomic,assign)id<WTAudioPlayerDelegate>delegate;
+@property(nonatomic,weak)id<WTAudioPlayerDelegate>delegate;
 
 ///  播放器的状态
 @property(nonatomic,assign,readonly)WTAudioPlayerStatus currentStatus;
