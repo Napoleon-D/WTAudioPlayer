@@ -5,7 +5,7 @@ target 'WTPlayer' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # 指定版本的为修改过源码或者不能更新最新版本的库
   # Pods for WTPlayer
-  pod 'KTVHTTPCache'
+  pod 'KTVHTTPCache', '~> 1.1.7'
   pod 'YYCategories'
   
 end

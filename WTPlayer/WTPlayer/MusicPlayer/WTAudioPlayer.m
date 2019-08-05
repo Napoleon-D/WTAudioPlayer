@@ -103,7 +103,6 @@
     [KTVHTTPCache logSetConsoleLogEnable:NO];
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        
         /// 本地服务只开启一次
         NSError * error;
         [KTVHTTPCache proxyStart:&error];
@@ -243,9 +242,20 @@
         return;
     }
     
+    if (item.status != AVPlayerItemStatusReadyToPlay) {
+        NSLog(@"播放资源未准备好");
+        return;
+    }
+    
     PauseTimeModel *mode = (PauseTimeModel *)[_pauseTimeDict objectForKey:urlString];
     if (!mode) {
         NSLog(@"该音频未暂停过");
+        return;
+    }
+    
+    CMTime pauseTime = CMTimeMake(mode.value, mode.timescale);
+    if (CMTIME_IS_INDEFINITE(pauseTime) || CMTIME_IS_INVALID(pauseTime)) {
+        NSLog(@"暂停时间不合法");
         return;
     }
     
@@ -270,12 +280,10 @@
     });
     
     ///  跳转到指定时间
-    CMTime pauseTime = CMTimeMake(mode.value, mode.timescale);
     [_audioPlayer replaceCurrentItemWithPlayerItem:item];
     [_audioPlayer seekToTime:pauseTime completionHandler:^(BOOL finished) {
         [self.audioPlayer play];
     }];
-    
     
 }
 
