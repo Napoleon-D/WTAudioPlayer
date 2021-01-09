@@ -36,6 +36,8 @@
 @property(nonatomic,copy)NSString *currentAudioPlayingURLString;
 ///  当前视频播放器长度的观察者
 @property(nonatomic,assign)id timeObserve;
+///  缓存添加观察者的item
+@property(nonatomic,strong)NSMutableArray *observeArray;
 
 @end
 
@@ -63,6 +65,7 @@
         _urlArray = [NSMutableArray array];
         _urlModelArray = [NSMutableArray array];
         _timeObserve = nil;
+        _observeArray = [NSMutableArray array];
         [self registerSystemObserve];
         [self setupHTTPCache];
     }
@@ -85,6 +88,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(successPlayToEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:item];
     [item addObserver:self forKeyPath:PlayerStatus options:NSKeyValueObservingOptionNew context:nil];
     [item addObserver:self forKeyPath:PlayerLoadedStatus options:NSKeyValueObservingOptionNew context:nil];
+    [self.observeArray addObject:item];
+    
 }
 
 -(void)removeAVPlayerItemObserveWithItem:(AVPlayerItem *)item{
@@ -93,8 +98,20 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemFailedToPlayToEndTimeNotification object:item];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemNewAccessLogEntryNotification object:item];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:item];
-    [item removeObserver:self forKeyPath:PlayerStatus];
-    [item removeObserver:self forKeyPath:PlayerLoadedStatus];
+    BOOL haveObserve = NO;
+    for (AVPlayerItem *tempItem in self.observeArray) {
+        if (tempItem == item) {
+            haveObserve = YES;
+            break;
+        }
+    }
+    if (haveObserve) {
+        // 此处之前因为未添加注册，然后移除，出现奔溃
+        [item removeObserver:self forKeyPath:PlayerStatus];
+        [item removeObserver:self forKeyPath:PlayerLoadedStatus];
+        [self.observeArray removeObject:item];
+    }
+    
 }
 
 - (void)setupHTTPCache
