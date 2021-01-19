@@ -140,55 +140,35 @@
 
 
 -(void)playWithUrlString:(NSString *)urlString isLocalFileURL:(BOOL)isLocalFile forClass:(Class)targetClass{
-    
     if (![urlString isNotBlank]) {
         NSLog(@"音频链接不能为空！");
         return;
     }
+    if ([_urlArray containsObject:urlString]) {
+        AVPlayerItem *item = _itemDict[urlString];
+        [self removeAVPlayerItemObserveWithItem:item];
+        [self removeAudioRecorde:urlString];
+    }
     self.needResumePlay = YES;
     self.currentAudioPlayingURLString = urlString;
-    AVPlayerItem *item;
-    if ([_urlArray containsObject:urlString]) {
-        
-        ///  播放过的音频，直接获取item
-        item = (AVPlayerItem *)[_itemDict objectForKey:urlString];
-        [_audioPlayer replaceCurrentItemWithPlayerItem:item];
-        [self addTimeObsrveToAudioPlayerWithItem:item];
-        self.playerStatus = WTAudioPlayerStatusUnknow;
-        [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusUnknow];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-                [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-            }
-        });
-        __weak WTAudioPlayer *weakSelf = self;
-        [_audioPlayer seekToTime:CMTimeMake(0, 1) completionHandler:^(BOOL finished) {
-            [weakSelf.audioPlayer play];
-        }];
-        
-    }else{
-        ///  未播放过得音频，添加到记录中去
-        [_urlArray addObject:urlString];
-        AudioURLModel *model = [[AudioURLModel alloc] init];
-        model.audioURL = urlString;
-        model.isLocalFile = isLocalFile;
-        model.tagClass = NSStringFromClass([targetClass class]);
-        [_urlModelArray addObject:model];
-        item = [self playerItemWithUrlString:urlString isLocalFileURL:isLocalFile];
-        [_itemDict setObject:item forKey:urlString];
-        [_audioPlayer replaceCurrentItemWithPlayerItem:item];
-        [self addTimeObsrveToAudioPlayerWithItem:item];
-        self.playerStatus = WTAudioPlayerStatusUnknow;
-        [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusUnknow];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-                [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-            }
-        });
-        
-        
-    }
-    
+    //  未播放过得音频，添加到记录中去
+    [_urlArray addObject:urlString];
+    AudioURLModel *model = [[AudioURLModel alloc] init];
+    model.audioURL = urlString;
+    model.isLocalFile = isLocalFile;
+    model.tagClass = NSStringFromClass([targetClass class]);
+    [_urlModelArray addObject:model];
+    AVPlayerItem *item = [self playerItemWithUrlString:urlString isLocalFileURL:isLocalFile];
+    [_itemDict setObject:item forKey:urlString];
+    [_audioPlayer replaceCurrentItemWithPlayerItem:item];
+    [self addTimeObsrveToAudioPlayerWithItem:item];
+    self.playerStatus = WTAudioPlayerStatusUnknow;
+    [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusUnknow];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+            [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
+        }
+    });
 }
 
 -(void)addTimeObsrveToAudioPlayerWithItem:(AVPlayerItem *)item{
@@ -531,9 +511,14 @@
 
 ///  重新播放
 -(void)replayWithUrlString:(NSString *)urlString{
+    AVPlayerItem *item = (AVPlayerItem *)[_itemDict objectForKey:urlString];
+    if (item.status != AVPlayerItemStatusReadyToPlay) {
+        // 播放资源未准备好
+        [self stopWithUrlString:urlString];
+        return;
+    }
     self.needResumePlay = YES;
     self.currentAudioPlayingURLString = urlString;
-    AVPlayerItem *item = (AVPlayerItem *)[_itemDict objectForKey:urlString];
     [_audioPlayer replaceCurrentItemWithPlayerItem:item];
     [self addTimeObsrveToAudioPlayerWithItem:item];
     __weak WTAudioPlayer *weakSelf = self;
