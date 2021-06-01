@@ -16,27 +16,30 @@
 #import "AudioURLModel.h"
 #import "Header.h"
 
-@interface WTAudioPlayer()
+@interface WTAudioPlayer(){
+    /// 异步队列
+    dispatch_queue_t _asyncQueue;
+}
 
-///  音频播放器
+/// 音频播放器
 @property(nonatomic,strong)AVPlayer *audioPlayer;
-///  当前播放器的状态
+/// 当前播放器的状态
 @property(nonatomic,assign)WTAudioPlayerStatus playerStatus;
-///  应用被唤醒时候，是否需要继续播放
+/// 应用被唤醒时候，是否需要继续播放
 @property(nonatomic,assign)BOOL needResumePlay;
-///  记录暂停时间
+/// 记录暂停时间
 @property(nonatomic,strong)NSMutableDictionary <NSString *,PauseTimeModel *>*pauseTimeDict;
-///  记录资源item
+/// 记录资源item
 @property(nonatomic,strong)NSMutableDictionary <NSString *,AVPlayerItem *>*itemDict;
-///  记录音频链接
+/// 记录音频链接
 @property(nonatomic,strong)NSMutableArray <NSString *>*urlArray;
-///  记录音频模型
+/// 记录音频模型
 @property(nonatomic,strong)NSMutableArray <AudioURLModel *>*urlModelArray;
-///  当前音频链接
+/// 当前音频链接
 @property(nonatomic,copy)NSString *currentAudioPlayingURLString;
-///  当前视频播放器长度的观察者
+/// 当前视频播放器长度的观察者
 @property(nonatomic,assign)id timeObserve;
-///  缓存添加观察者的item
+/// 缓存添加观察者的item
 @property(nonatomic,strong)NSMutableArray *observeArray;
 
 @end
@@ -52,12 +55,13 @@
     return instance;
 }
 
-+(WTAudioPlayer *)audioPlayer{
++ (WTAudioPlayer *)audioPlayer{
     return [[WTAudioPlayer alloc] init];
 }
 
--(instancetype)init{
+- (instancetype)init{
     if (self = [super init]) {
+        _asyncQueue = dispatch_queue_create("com.WTAudioPlayer", DISPATCH_QUEUE_SERIAL);
         _audioPlayer = [[AVPlayer alloc] init];
         _audioPlayer.volume = 1.0f;
         _pauseTimeDict = [NSMutableDictionary dictionary];
@@ -151,7 +155,7 @@
     }
     self.needResumePlay = YES;
     self.currentAudioPlayingURLString = urlString;
-    //  未播放过得音频，添加到记录中去
+    // 未播放过得音频，添加到记录中去
     [_urlArray addObject:urlString];
     AudioURLModel *model = [[AudioURLModel alloc] init];
     model.audioURL = urlString;
@@ -172,34 +176,29 @@
 }
 
 -(void)addTimeObsrveToAudioPlayerWithItem:(AVPlayerItem *)item{
-    
     __weak WTAudioPlayer *weakSelf = self;
     if (_timeObserve) {
         [_audioPlayer removeTimeObserver:_timeObserve];
         _timeObserve = nil;
     }
-    _timeObserve = [_audioPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    _timeObserve = [_audioPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:_asyncQueue usingBlock:^(CMTime time) {
         [weakSelf resolvePlayerTime:time palyerItem:item];
     }];
 }
 
 -(void)pauseWithUrlString:(NSString *)urlString{
-    
     if (![urlString isNotBlank]) {
         NSLog(@"暂停的音频链接不能为空!");
         return;
     }
-    
     if (![_urlArray containsObject:urlString]) {
         NSLog(@"不存在该音频链接!");
         return;
     }
-    
     if (![urlString isEqualToString:_currentAudioPlayingURLString]) {
         NSLog(@"暂停了一个未播放的音频!");
         return;
     }
-    
     self.needResumePlay = NO;
     self.playerStatus = WTAudioPlayerStatusPause;
     [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusPause];
@@ -208,95 +207,79 @@
             [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:urlString];
         }
     });
-    
-    ///  记录暂停的时间
+    // 记录暂停的时间
     PauseTimeModel *model = [[PauseTimeModel alloc] init];
     model.value = _audioPlayer.currentTime.value;
     model.timescale = _audioPlayer.currentTime.timescale;
     model.flags = _audioPlayer.currentTime.flags;
     model.epoch = _audioPlayer.currentTime.epoch;
     [_pauseTimeDict setObject:model forKey:urlString];
-    ///  暂停
+    // 暂停
     [_audioPlayer pause];
-    
 }
 
 -(void)resumeWithUrlString:(NSString *)urlString{
-    
     if (![urlString isNotBlank]) {
         NSLog(@"续播的音频链接不能为空!");
         return;
     }
-    
     if (![_urlArray containsObject:urlString]) {
         NSLog(@"续播了一个未播放的音频");
         return;
     }
-    
     AVPlayerItem *item = (AVPlayerItem *)[_itemDict objectForKey:urlString];
     if (!item) {
         NSLog(@"续播了一个未播放的音频");
         return;
     }
-    
     if (item.status != AVPlayerItemStatusReadyToPlay) {
         NSLog(@"播放资源未准备好");
         return;
     }
-    
     PauseTimeModel *mode = (PauseTimeModel *)[_pauseTimeDict objectForKey:urlString];
     if (!mode) {
         NSLog(@"该音频未暂停过");
         return;
     }
-    
     CMTime pauseTime = CMTimeMake(mode.value, mode.timescale);
     if (CMTIME_IS_INDEFINITE(pauseTime) || CMTIME_IS_INVALID(pauseTime)) {
         NSLog(@"暂停时间不合法");
         return;
     }
-    
     self.needResumePlay = YES;
     self.currentAudioPlayingURLString = urlString;
     
-    ///  设置音频会话分类
+    // 设置音频会话分类
     NSString *sessionCategory = AVAudioSessionCategoryPlayback;
     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenPlaying)] && self.delegate) {
         sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
     }
     [self audioSessionSetActive:YES setCategory:sessionCategory];
-    
-    ///  改变播放器状态
+    // 改变播放器状态
     self.playerStatus = WTAudioPlayerStatusResume;
     [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusResume];
-    
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
             [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
         }
     });
-    
-    ///  跳转到指定时间
+    // 跳转到指定时间
     [_audioPlayer replaceCurrentItemWithPlayerItem:item];
     [_audioPlayer seekToTime:pauseTime completionHandler:^(BOOL finished) {
         [self.audioPlayer play];
     }];
-    
 }
 
 -(void)stopWithUrlString:(NSString *)urlString{
-    
     if (![urlString isNotBlank]) {
         NSLog(@"停止播放的url不能为空");
         return;
     }
-    
     if (![_urlArray containsObject:urlString]) {
         NSLog(@"停止了一个未播放过的音频");
         return;
     }
-    
-    ///  改变状态并回调
+    // 改变状态并回调
     self.playerStatus = WTAudioPlayerStatusStop;
     [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusStop];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -304,60 +287,48 @@
             [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:urlString];
         }
     });
-    
-    ///  停止播放
+    // 停止播放
     [_audioPlayer pause];
-    
-    /// 移除对AVPlayerItem的监听
+    // 移除对AVPlayerItem的监听
     [self removeAVPlayerItemObserveWithItem:_audioPlayer.currentItem];
-    
-    ///  移除已经记录过得音频
+    // 移除已经记录过得音频
     [self removeAudioRecorde:urlString];
-    
-    ///  操作此功能，应用再次被响应的时候，不会继续播放
+    // 操作此功能，应用再次被响应的时候，不会继续播放
     self.needResumePlay = NO;
-    
-    ///  停止检测
+    // 停止检测
     if (self.timeObserve) {
         [self.audioPlayer removeTimeObserver:self.timeObserve];
         self.timeObserve = nil;
     }
-    
-    
 }
 
-///  移除已经记录过得音频
+/// 移除已经记录过得音频
 -(void)removeAudioRecorde:(NSString *)urlString{
-    ///  移除url
+    // 移除url
     if ([_urlArray containsObject:urlString]) {
         [_urlArray removeObject:urlString];
     }
-    
-    ///  移除urlModel
+    //  移除urlModel
     for(AudioURLModel *model in _urlModelArray){
         if ([model.audioURL isEqualToString:urlString]) {
             [_urlModelArray removeObject:model];
             break;
         }
     }
-    
-    ///  移除AVPlayerItem
+    //  移除AVPlayerItem
     if ([_itemDict containsObjectForKey:urlString]) {
         [_itemDict removeObjectForKey:urlString];
     }
-    
-    ///  移除暂停时间
+    //  移除暂停时间
     if ([_pauseTimeDict containsObjectForKey:urlString]) {
         [_pauseTimeDict removeObjectForKey:urlString];
     }
 }
 
-///  根据class标示释放内存中对应的item-->一般用于实例
+/// 根据class标示释放内存中对应的item-->一般用于实例
 -(void)releaseAudioPlayerForClass:(Class)targetClass{
-    
     [self.audioPlayer pause];
-    
-    ///  移除对应的类播放过的URL
+    // 移除对应的类播放过的URL
     NSMutableArray <NSString *>*willRemoveArray = [NSMutableArray array];
     NSString *tagClassString = NSStringFromClass([targetClass class]);
     NSMutableArray <AudioURLModel *>*willStayModelArray = [NSMutableArray array];
@@ -370,15 +341,13 @@
         }
     }
     _urlModelArray = willStayModelArray;
-    
-    ///  移除对应的类暂停过的时间模型
+    // 移除对应的类暂停过的时间模型
     for(NSString *key in willRemoveArray){
         if ([_pauseTimeDict containsObjectForKey:key]) {
             [_pauseTimeDict removeObjectForKey:key];
         }
     }
-    
-    ///  移除对应的类播放过的AVPlayerItem
+    // 移除对应的类播放过的AVPlayerItem
     for(NSString *key in willRemoveArray){
         if ([_itemDict containsObjectForKey:key]) {
             AVPlayerItem *item = _itemDict[key];
@@ -386,16 +355,12 @@
             [_itemDict removeObjectForKey:key];
         }
     }
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
     self.delegate = nil;
-    
     if (_timeObserve) {
         [_audioPlayer removeTimeObserver:_timeObserve];
         _timeObserve = nil;
     }
-    
 }
 
 ///  根据class标示释放内存中对应的资源-->一般用于单例
@@ -490,26 +455,22 @@
     return self.playerStatus;
 }
 
-///  处理播放器的播放时间
+/// 处理播放器的播放时间
 -(void)resolvePlayerTime:(CMTime)time palyerItem:(AVPlayerItem *)item{
-    
     double elapsedSeconds = CMTimeGetSeconds(time);
     double totalSeconds = CMTimeGetSeconds(item.asset.duration);
-    
-    if(totalSeconds == 0 || isnan(totalSeconds) || elapsedSeconds > totalSeconds){
+    if (totalSeconds == 0 || isnan(totalSeconds) || elapsedSeconds > totalSeconds){
         return;
     }
-    
     dispatch_async(dispatch_get_main_queue(), ^{
-        /// 播放时间回调
+        // 播放时间回调
         if ([self.delegate respondsToSelector:@selector(audioPlayerURL:currentTime:forTotalSeconds:status:)] && self.delegate) {
             [self.delegate audioPlayerURL:self->_currentAudioPlayingURLString currentTime:elapsedSeconds forTotalSeconds:totalSeconds status:self.playerStatus];
         }
     });
-    
 }
 
-///  重新播放
+/// 重新播放
 -(void)replayWithUrlString:(NSString *)urlString{
     AVPlayerItem *item = (AVPlayerItem *)[_itemDict objectForKey:urlString];
     if (item.status != AVPlayerItemStatusReadyToPlay) {
@@ -532,7 +493,6 @@
         });
         [weakSelf.audioPlayer play];
     }];
-    
 }
 
 ///  获取AVPlayerItem
@@ -646,8 +606,7 @@
 
 ///  成功播放到结束
 -(void)successPlayToEnd:(NSNotification *)notification{
-    
-    /// 设置播放进度
+    // 设置播放进度
     double totalSeconds = CMTimeGetSeconds(self.audioPlayer.currentItem.asset.duration);
     if((totalSeconds != 0) && !isnan(totalSeconds)){
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -656,63 +615,53 @@
             }
         });
     }
-    
-    
-    ///  是否循环播放
+    // 是否循环播放
     BOOL autoPlay = NO;
     if ([self.delegate respondsToSelector:@selector(shouldAutoPlayAudio:forURLString:)] && self.delegate) {
         autoPlay = [self.delegate shouldAutoPlayAudio:_audioPlayer forURLString:_currentAudioPlayingURLString];
     }
     if (autoPlay) {
-        ///  循环播放
+        // 循环播放
         [self replayWithUrlString:self.currentAudioPlayingURLString];
     }else{
-        ///  不循环播放
-        
-        ///  移除监听
+        // 不循环播放
+        // 移除监听
         [self removeAVPlayerItemObserveWithItem:self.audioPlayer.currentItem];
-        /// 移除记录
+        // 移除记录
         [self removeAudioRecorde:self.currentAudioPlayingURLString];
-        ///  状态改变 && 回调
+        //  状态改变 && 回调
         self.playerStatus = WTAudioPlayerStatusPlayToEnd;
         [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayToEnd];
         dispatch_async(dispatch_get_main_queue(), ^{
-            
+            // 改变状态的回调
             if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
                 [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
             }
-        });
-        
-        ///  播放完成回调
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
+            // 播放完成回调
             if ([self.delegate respondsToSelector:@selector(audioPlayer:didFinishedPlayForURLString:)] && self.delegate) {
                 [self.delegate audioPlayer:self.audioPlayer didFinishedPlayForURLString:self.currentAudioPlayingURLString];
             }
         });
-        
-        ///  操作此功能，应用再次被响应的时候，不会继续播放
+        // 操作此功能，应用再次被响应的时候，不会继续播放
         self.needResumePlay = NO;
     }
 }
 
-///  未能播放到结束
+/// 未能播放到结束
 -(void)failedPlayToEnd:(NSNotification *)notification{
-    ///  改变状态 && 回调
+    // 改变状态 && 回调
     self.playerStatus = WTAudioPlayerStatusPlayFailed;
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
             [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
         }
     });
-    
     [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayFailed];
 }
 
-///  播放到一半去缓存
+/// 播放到一半去缓存
 -(void)interruptPlayToCache:(NSNotification *)notification{
-    
-    ///  改变状态 && 回调
+    // 改变状态 && 回调
     //    self.playerStatus = WTAudioPlayerStatusCaching;
     //    [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusCaching];
     //    dispatch_async(dispatch_get_main_queue(), ^{
@@ -722,10 +671,9 @@
     //    });
 }
 
-///  缓存失败，未能成功恢复播放
+/// 缓存失败，未能成功恢复播放
 -(void)recoveryPlayError:(NSNotification *)notification{
-    
-    ///  改变状态 && 回调
+    // 改变状态 && 回调
     self.playerStatus = WTAudioPlayerStatusPlayFailed;
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
@@ -735,29 +683,23 @@
     [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayFailed];
 }
 
-///  (AVPlayer有新的日志记录，会调用该方法，比如新的播放，暂停)缓存成功，恢复播放
+/// (AVPlayer有新的日志记录，会调用该方法，比如新的播放，暂停)缓存成功，恢复播放
 -(void)recoveryPlaySuccess:(NSNotification *)notification{
-    
     if (self.playerStatus == WTAudioPlayerStatusUnknow) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.playerStatus = WTAudioPlayerStatusPlaying;
             [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlaying];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
-                    [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
-                }
-            });
+            if ([self.delegate respondsToSelector:@selector(audioPlayer:didChangedStatus:audioURLString:)] && self.delegate) {
+                [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
+            }
         });
     }
-    
 }
 
 ///  KVO
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
-    
     AVPlayerItem *item = (AVPlayerItem *)object;
-    
-    ///  资源加载状态
+    // 资源加载状态
     if ([keyPath isEqualToString:PlayerStatus]) {
         AVPlayerItemStatus status = item.status;
         switch (status) {
@@ -769,28 +711,22 @@
                         [self.delegate audioPlayer:self.audioPlayer didChangedStatus:self.playerStatus audioURLString:self.currentAudioPlayingURLString];
                     }
                 });
-                
                 break;
             }
-                
             case AVPlayerItemStatusReadyToPlay:{
                 if (self.playerStatus == WTAudioPlayerStatusUnknow) {
-                    
                     NSString *sessionCategory = AVAudioSessionCategoryPlayback;
                     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenPlaying)] && self.delegate) {
                         sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
                     }
                     [self audioSessionSetActive:YES setCategory:sessionCategory];
-                    
-                    /// 本地文件开始播放不会触发AVPlayer的通知
+                    // 本地文件开始播放不会触发AVPlayer的通知
                     AudioURLModel *currentModel = [self getAudioURLModelForAudioURLString:self.currentAudioPlayingURLString];
                     if (currentModel.isLocalFile) [self recoveryPlaySuccess:nil];
-                    
                     [_audioPlayer play];
                 }
                 break;
             }
-                
             case AVPlayerItemStatusFailed:{
                 self.playerStatus = WTAudioPlayerStatusPlayFailed;
                 [self setAudioURLModelStatusWithString:self.currentAudioPlayingURLString andStatus:WTAudioPlayerStatusPlayFailed];
@@ -801,7 +737,6 @@
                 });
                 break;
             }
-                
             default:
                 break;
         }
