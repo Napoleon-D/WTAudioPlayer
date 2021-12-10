@@ -248,13 +248,14 @@
     }
     self.needResumePlay = YES;
     self.currentAudioPlayingURLString = urlString;
-    
     // 设置音频会话分类
-    NSString *sessionCategory = AVAudioSessionCategoryPlayback;
     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenPlaying)] && self.delegate) {
-        sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
+        NSString *sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
+        if ([sessionCategory isKindOfClass:[NSString class]] &&
+            sessionCategory.length > 0) {
+            [self audioSessionSetActive:YES setCategory:sessionCategory];
+        }
     }
-    [self audioSessionSetActive:YES setCategory:sessionCategory];
     // 改变播放器状态
     self.playerStatus = WTAudioPlayerStatusResume;
     [self setAudioURLModelStatusWithString:urlString andStatus:WTAudioPlayerStatusResume];
@@ -531,15 +532,15 @@
 
 ///  当前应用取消第一响应
 -(void)applicationWillResignActive:(NSNotification *)notification{
-    
-    ///  设置音频会话分类
-    NSString *audioCategory = AVAudioSessionCategoryPlayback;
+    // 设置音频会话分类
     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenApplicationWillResignActive)] && self.delegate) {
-        audioCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenApplicationWillResignActive];
+        NSString *audioCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenApplicationWillResignActive];
+        if ([audioCategory isKindOfClass:[NSString class]] &&
+            audioCategory.length > 0) {
+            [self audioSessionSetActive:NO setCategory:audioCategory];
+        }
     }
-    [self audioSessionSetActive:NO setCategory:audioCategory];
-    
-    ///  是否暂停
+    // 是否暂停
     BOOL shouldPause = YES;
     if ([self.delegate respondsToSelector:@selector(shouldPauseWhenApplicationWillResignActive:)] && self.delegate) {
         shouldPause = [self.delegate shouldPauseWhenApplicationWillResignActive:self.audioPlayer];
@@ -552,15 +553,14 @@
 
 ///  当前应用进入后台
 -(void)applicationDidEnterBackground:(NSNotification *)notification{
-    
-    ///  设置音频会话分类
-    NSString *audioCategory = AVAudioSessionCategoryAmbient;
+    // 设置音频会话分类
     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenApplicationWillResignActive)] && self.delegate) {
-        audioCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenApplicationWillResignActive];
+        NSString *audioCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenApplicationWillResignActive];
+        if ([audioCategory isKindOfClass:[NSString class]] && audioCategory.length > 0) {
+            [self audioSessionSetActive:NO setCategory:audioCategory];
+        }
     }
-    [self audioSessionSetActive:NO setCategory:audioCategory];
-    
-    ///  是否暂停
+    // 是否暂停
     BOOL shouldPause = YES;
     if ([self.delegate respondsToSelector:@selector(shouldPauseWhenApplicationDidEnterBackground:)] && self.delegate) {
         shouldPause = [self.delegate shouldPauseWhenApplicationDidEnterBackground:self.audioPlayer];
@@ -715,11 +715,12 @@
             }
             case AVPlayerItemStatusReadyToPlay:{
                 if (self.playerStatus == WTAudioPlayerStatusUnknow) {
-                    NSString *sessionCategory = AVAudioSessionCategoryPlayback;
                     if ([self.delegate respondsToSelector:@selector(audioPlayerPreferAudioSessionCategoryWhenPlaying)] && self.delegate) {
-                        sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
+                        NSString *sessionCategory = [self.delegate audioPlayerPreferAudioSessionCategoryWhenPlaying];
+                        if ([sessionCategory isKindOfClass:[NSString class]] && sessionCategory.length > 0) {
+                            [self audioSessionSetActive:YES setCategory:sessionCategory];
+                        }
                     }
-                    [self audioSessionSetActive:YES setCategory:sessionCategory];
                     // 本地文件开始播放不会触发AVPlayer的通知
                     AudioURLModel *currentModel = [self getAudioURLModelForAudioURLString:self.currentAudioPlayingURLString];
                     if (currentModel.isLocalFile) [self recoveryPlaySuccess:nil];
